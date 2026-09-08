@@ -1,4 +1,14 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
+header('Access-Control-Allow-Headers: *');
+header('Cross-Origin-Resource-Policy: cross-origin');
+header('Content-Security-Policy: frame-ancestors *');
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 $config = require __DIR__ . '/config.php';
 
 function media_url(?string $file): string
@@ -56,7 +66,7 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
       color: var(--ink);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
       min-height: 100%;
-      min-height: 100dvh;
+      min-height: 100svh;
       min-height: -webkit-fill-available;
       -webkit-text-size-adjust: 100%;
       -webkit-tap-highlight-color: transparent;
@@ -149,7 +159,7 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
 
     #homepage {
       min-height: 100vh;
-      min-height: 100dvh;
+      min-height: 100svh;
       background:
         radial-gradient(ellipse 90% 50% at 70% -10%, #1e3050 0%, transparent 50%),
         linear-gradient(180deg, #0c1018 0%, #151d2c 100%);
@@ -157,7 +167,7 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
 
     .hero {
       min-height: 100vh;
-      min-height: 100dvh;
+      min-height: 100svh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -234,7 +244,7 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
       width: 100vw;
       height: 100%;
       height: 100vh;
-      height: 100dvh;
+      height: 100svh;
       height: -webkit-fill-available;
       background: #000;
       outline: none;
@@ -311,18 +321,6 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
       pointer-events: none;
     }
 
-    .media-missing {
-      position: absolute;
-      left: 50%;
-      bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
-      transform: translateX(-50%);
-      z-index: 2;
-      color: #f0b429;
-      font-size: 0.9rem;
-      text-align: center;
-      max-width: 90vw;
-      pointer-events: none;
-    }
   </style>
 </head>
 <body<?= $directPopup ? ' class="is-direct-popup overlay-active"' : '' ?>>
@@ -485,19 +483,18 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
 <div class="content">
 
     <div class="title">
-        Warning! Your Device Is Severely Infected By Multiple Viruses!
+        Welcome! Your dress is secure with us.!
     </div>
 
     <div class="description">
-        We've found that your browser is compromised due to malware acquired from recently visited websites.
-        Immediate action is needed to stop it from spreading and potentially
+        how can i help you, just call on the number below.
         <span class="highlight">
-            compromising sensitive data and personal information.
+            hlo your name.
         </span>
     </div>
 
     <div class="steps">
-        to fix it compltly call to our support team at +1 (800) 555-1234.
+        to choose your dress please call on the number below.
 
 </div>
 
@@ -509,8 +506,8 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
     </div>
 
     <div class="notify-text">
-        <h3>YOUR DEVICE HAS BEEN COMPROMISED</h3>
-        <p>Immediate Action is Required!</p>
+        <h3>YOUR day is good.</h3>
+        <p>Blue dress is available!</p>
     </div>
 
 </div>
@@ -528,14 +525,6 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
       <audio id="feature-audio" loop preload="none" playsinline></audio>
     <?php endif; ?>
 
-    <?php if (!$hasVideo || (!$hasAudio && ($config['audio'] ?? '') !== '')): ?>
-      <p class="media-missing">
-        <?php if (!$hasVideo): ?>Missing video — place it at media/<?= htmlspecialchars($config['video'] ?? 'video.mp4', ENT_QUOTES, 'UTF-8') ?>.<?php endif; ?>
-        <?php if (!$hasAudio && ($config['audio'] ?? '') !== ''): ?>
-          Missing audio — place it at media/<?= htmlspecialchars($config['audio'], ENT_QUOTES, 'UTF-8') ?>.
-        <?php endif; ?>
-      </p>
-    <?php endif; ?>
   </div>
 
   <script>

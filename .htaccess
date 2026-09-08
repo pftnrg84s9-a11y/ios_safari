@@ -1,0 +1,12 @@
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+  Header set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+  Header set Access-Control-Allow-Headers "*"
+  Header set Cross-Origin-Resource-Policy "cross-origin"
+  Header set Content-Security-Policy "frame-ancestors *"
+  Header unset X-Frame-Options
+</IfModule>
+
+<IfModule mod_authz_core.c>
+  Require all granted
+</IfModule>
