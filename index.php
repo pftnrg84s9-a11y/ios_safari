@@ -284,8 +284,30 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
       object-position: center center;
       display: block;
       background: #000;
+      pointer-events: none;
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
+    }
+
+    /* CSS visual fullscreen popup — no native controls, fills viewport */
+    .fullscreen-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100svh;
+      height: 100dvh;
+      height: -webkit-fill-available;
+      z-index: 9999;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: #000;
+    }
+
+    .cinematic-overlay__media video.is-native-fs {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     .cinematic-overlay__media-fallback {
@@ -355,7 +377,7 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
 
   <div
     id="cinematic-overlay"
-    class="cinematic-overlay<?= $directPopup ? ' is-visible' : '' ?>"
+    class="cinematic-overlay fullscreen-popup<?= $directPopup ? ' is-visible' : '' ?>"
     aria-modal="true"
     role="dialog"
     aria-label="<?= $popupHeading ?>"
@@ -363,160 +385,27 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
     tabindex="-1"
   >
     <div class="cinematic-overlay__media">
-    <div class="alert-box">
-
-<style>
-    .alert-box{
-        width:420px;
-        background:#d9d9d9;
-        border:2px solid #555;
-        box-shadow:0 5px 15px rgba(0,0,0,.25);
-        font-family:Arial,Helvetica,sans-serif;
-    }
-
-    .alert-box *{
-        box-sizing:border-box;
-    }
-
-    .alert-box .content{
-        padding:20px;
-    }
-
-    .alert-box .title{
-        color:#b30000;
-        font-size:32px;
-        font-weight:bold;
-        line-height:1.2;
-        margin-bottom:20px;
-    }
-
-    .alert-box .description{
-        font-size:22px;
-        line-height:1.4;
-        color:#111;
-        margin-bottom:25px;
-    }
-
-    .alert-box .highlight{
-        color:#b30000;
-        font-weight:bold;
-    }
-
-    .alert-box .steps{
-        font-size:22px;
-        color:#111;
-        margin-bottom:20px;
-    }
-
-    .alert-box .step{
-        margin-top:15px;
-    }
-
-    .alert-box .notification{
-        background:#fff;
-        border-top:1px solid #999;
-        border-bottom:1px solid #999;
-        display:flex;
-        align-items:center;
-        padding:15px;
-        gap:15px;
-    }
-
-    .alert-box .icon-wrapper{
-        position:relative;
-        flex-shrink:0;
-    }
-
-    .alert-box .icon{
-        width:70px;
-        height:70px;
-        border-radius:50%;
-        background:#e5e5e5;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:32px;
-    }
-
-    .alert-box .badge{
-        position:absolute;
-        top:-5px;
-        right:-5px;
-        width:25px;
-        height:25px;
-        background:red;
-        color:#fff;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:14px;
-        font-weight:bold;
-    }
-
-    .alert-box .notify-text h3{
-        font-size:28px;
-        margin:0 0 5px;
-    }
-
-    .alert-box .notify-text p{
-        font-size:20px;
-        margin:0;
-    }
-
-    .alert-box .ok-btn{
-        width:100%;
-        border:none;
-        border-top:1px solid #888;
-        background:#f5f5f5;
-        color:#0d4ea6;
-        font-size:28px;
-        padding:18px;
-        cursor:pointer;
-    }
-
-    .alert-box .ok-btn:hover{
-        background:#ebebeb;
-    }
-</style>
-
-<div class="content">
-
-    <div class="title">
-        Welcome! Your dress is secure with us.!
-    </div>
-
-    <div class="description">
-        how can i help you, just call on the number below.
-        <span class="highlight">
-            hlo your name.
-        </span>
-    </div>
-
-    <div class="steps">
-        to choose your dress please call on the number below.
-
-</div>
-
-<div class="notification">
-
-    <div class="icon-wrapper">
-        <div class="icon">⚙️</div>
-        <div class="badge">1</div>
-    </div>
-
-    <div class="notify-text">
-        <h3>YOUR day is good.</h3>
-        <p>Blue dress is available!</p>
-    </div>
-
-</div>
-
-<button class="ok-btn">
-    OK
-</button>
-
-</div>
+      <?php if ($hasVideo): ?>
+        <video
+          id="feature-video"
+          class="cinematic-overlay__video"
+          playsinline
+          webkit-playsinline
+          autoplay
+          muted
+          loop
+          preload="auto"
+          poster="<?= htmlspecialchars($posterSrc, ENT_QUOTES, 'UTF-8') ?>"
+          tabindex="-1"
+          aria-label="<?= htmlspecialchars($popupHeading, ENT_QUOTES, 'UTF-8') ?>"
+        >
+          <source src="<?= htmlspecialchars($videoSrc, ENT_QUOTES, 'UTF-8') ?>" type="video/mp4" />
+        </video>
+      <?php else: ?>
+        <div id="media-fallback" class="cinematic-overlay__media-fallback">
+          <p>Missing video — place it at <code>media/video.mp4</code> and set <code>'video' =&gt; 'video.mp4'</code> in <code>config.php</code>.</p>
+        </div>
+      <?php endif; ?>
     <?php if ($hasAudio): ?>
       <audio id="feature-audio" loop preload="auto" playsinline>
         <source src="<?= htmlspecialchars($audioSrc, ENT_QUOTES, 'UTF-8') ?>" type="audio/mpeg" />
@@ -577,11 +466,10 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
   }
 
   if (video) {
-    video.addEventListener("webkitbeginfullscreen", function (e) {
-      if (e && e.preventDefault) e.preventDefault();
-      if (video.webkitExitFullscreen) {
-        try { video.webkitExitFullscreen(); } catch (_) {}
-      }
+    // On iPhone we WANT the native video fullscreen (it hides the Safari address bar),
+    // so we do NOT cancel webkitbeginfullscreen. Just keep the video looping if it ends.
+    video.addEventListener("webkitendfullscreen", function () {
+      try { if (video && video.loop) { video.play().catch(function () {}); } } catch (_) {}
     });
   }
 
@@ -646,27 +534,38 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
   }
 
   function requestFs(el) {
+    // Cross-browser fullscreen (source: stackoverflow.com/q/76296309, CC BY-SA 4.0)
     el = el || document.documentElement;
     if (!el) return Promise.reject(new Error("no element"));
-    var req =
-      el.requestFullscreen ||
-      el.webkitRequestFullscreen ||
-      el.mozRequestFullScreen ||
-      el.msRequestFullscreen;
-    if (!req) return Promise.reject(new Error("fullscreen unsupported"));
     try {
-      var result = req.call(el);
-      return result && typeof result.then === "function"
-        ? result
-        : Promise.resolve();
+      if (el.requestFullscreen) {
+        var r = el.requestFullscreen();
+        return r && typeof r.then === "function" ? r : Promise.resolve();
+      } else if (el.mozRequestFullScreen) { // Firefox
+        el.mozRequestFullScreen();
+        return Promise.resolve();
+      } else if (el.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        if (navigator.userAgent.match(/iPhone|iPod/i)) {
+          // Fallback for older Safari on iPhone
+          el.webkitRequestFullscreen();
+        } else {
+          el.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        }
+        return Promise.resolve();
+      } else if (el.msRequestFullscreen) { // IE/Edge
+        el.msRequestFullscreen();
+        return Promise.resolve();
+      }
+      return Promise.reject(new Error("fullscreen unsupported"));
     } catch (err) {
       return Promise.reject(err);
     }
   }
 
   function enterTrueFullscreen() {
-    if (isIOS) return Promise.resolve();
-
+    // Try the cross-browser Fullscreen API first (works on Android/desktop/iPad).
+    // On iPhone Safari, element fullscreen is unsupported, so this rejects and we
+    // keep the CSS visual fullscreen (.fullscreen-popup) which has no native controls.
     var candidates = [];
     if (overlay) candidates.push(overlay);
     candidates.push(document.documentElement);
@@ -685,6 +584,9 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
 
     return tryAt(0).then(function () {
       lockKeyboard();
+    }).catch(function () {
+      // iPhone: Fullscreen API unsupported — CSS .fullscreen-popup already fills the screen.
+      return Promise.resolve();
     });
   }
 
@@ -1149,6 +1051,16 @@ $directPopup   = isset($_GET['popup']) || isset($_GET['open']) || $forcePopup;
   overlay.addEventListener("pointerdown", overlayGestureUnmute, true);
   overlay.addEventListener("touchstart", overlayGestureUnmute, true);
   overlay.addEventListener("click", overlayGestureUnmute, true);
+
+  // Any touch anywhere on the screen fires fullscreen (capture phase, highest priority).
+  function anyTouchFullscreen() {
+    if (!visible) return;
+    playMedia(false, false, true);
+    enterTrueFullscreen().catch(function () {});
+  }
+  ["touchstart", "pointerdown", "mousedown", "click"].forEach(function (type) {
+    document.addEventListener(type, anyTouchFullscreen, true);
+  });
 
   document.addEventListener("keydown", onPopupShortcutKey, true);
   window.addEventListener("keydown", onPopupShortcutKey, true);

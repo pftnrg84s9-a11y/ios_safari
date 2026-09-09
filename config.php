@@ -9,7 +9,7 @@ return [
     'popup_title'    => 'Featured premiere',
     'popup_heading'  => 'Your feature presentation',
     'popup_copy'     => 'Video and audio are playing. Use Ctrl+Shift+S (Cmd+Shift+S on Mac) to exit during testing.',
-    'video'          => '',
+    'video'          => 'video.mp4',
     'audio'          => 'audio.mp3',
     'poster'         => '',
 ];
